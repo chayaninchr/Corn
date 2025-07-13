@@ -53,6 +53,21 @@
         }
       }
 
+      @keyframes zoom-in {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .zoom-in {
+        animation: zoom-in 0.4s ease-out forwards;
+      }
+
       #personWithFlower {
         display: inline-block;
       }
@@ -89,11 +104,13 @@
         transform: scale(1);
         transition: transform 300ms ease;
       }
+
       .pushable .shadow,
       .pushable .edge,
       .pushable .front {
         border-radius: 20px;
       }
+
       .pushable .shadow {
         position: absolute;
         top: 0;
@@ -104,6 +121,7 @@
         filter: blur(1.5px);
         transform: translateY(2px);
       }
+
       .pushable .edge {
         position: absolute;
         top: 0;
@@ -112,6 +130,7 @@
         height: 100%;
         background: #e6e6e6;
       }
+
       .pushable .front {
         display: block;
         position: relative;
@@ -123,15 +142,19 @@
         transform: translateY(-4px);
         transition: transform 200ms ease;
       }
+
       .pushable:hover .front {
         transform: translateY(-6px);
       }
+
       .pushable:active .front {
         transform: translateY(-2px);
       }
+
       .pushable:hover .shadow {
         transform: translateY(4px);
       }
+
       .pushable:active .shadow {
         transform: translateY(1px);
       }
@@ -203,6 +226,10 @@
         flex-direction: column;
         align-items: center;
       }
+
+      #mainButtons {
+        visibility: hidden;
+      }
     </style>
   </head>
   <body>
@@ -254,6 +281,7 @@
       const questionText = document.getElementById("questionText");
       const nextButtonWrapper = document.getElementById("nextButtonWrapper");
       const personWithFlower = document.getElementById("personWithFlower");
+      const mainButtons = document.getElementById("mainButtons");
 
       let noClickCount = 0,
         loveScale = 1,
@@ -265,6 +293,7 @@
         "แงงง เบบี๋ไม่รัก",
         "ฮือออ คนใจร้าย",
         "ไม่รักจริงๆ หรอ T.T",
+        "แง่ว ลองคิดอีกทีได้มั้ย",
         "พี่ให้โอกาสตอบอีกที",
       ];
 
@@ -287,7 +316,10 @@
 
       window.addEventListener("load", () => {
         setTimeout(() => {
-          typeText("เบบี๋รักพี่มั้ยคับ...", questionText);
+          typeText("เบบี๋รักพี่มั้ยคับ...", questionText, 60, () => {
+            mainButtons.style.visibility = "visible";
+            mainButtons.classList.add("zoom-in");
+          });
         }, 1800);
       });
 
