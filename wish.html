@@ -222,15 +222,6 @@
         transform: translateY(1px);
       }
 
-      #finalButtonWrapper {
-        display: none;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 30;
-      }
-
       @media (max-width: 480px) {
         .wish-wrapper img {
           width: 437px;
@@ -288,6 +279,7 @@
       src="https://raw.githubusercontent.com/chayaninchr/Corn/refs/heads/main/SENDING.gif"
       alt="sending..."
     />
+
     <script>
       const wishInput = document.getElementById("wishText");
       const placeholderText = document.getElementById("placeholderText");
@@ -303,7 +295,6 @@
         const cake = document.getElementById("cake");
         const alertText = document.getElementById("alertText");
         const gif = document.getElementById("sendingGif");
-        const finalButton = document.getElementById("finalButtonWrapper");
 
         wishInput.blur();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -331,9 +322,10 @@
           gif.style.display = "block";
         }, 3000);
 
+        // ✅ หลังจากแสดง GIF เสร็จ ให้ redirect ไปหน้าถัดไป
         setTimeout(() => {
           gif.style.display = "none";
-          finalButton.style.display = "block";
+          window.location.href = "https://chayaninchr.github.io/Corn/ask.html";
         }, 51000);
       }
     </script>
