@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>นักดนตรี</title>
+    <style>
+      @font-face {
+        font-family: "PixelFont";
+        src: url("https://chayaninchr.github.io/Corn/PIXEL.ttf")
+          format("truetype");
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "PixelFont", monospace;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #fff;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        overflow: hidden;
+        position: relative;
+      }
+
+      #musician {
+        width: 100%;
+        max-width: 480px;
+        height: auto;
+        margin-top: 100px;
+      }
+
+      .typewriter-text {
+        position: absolute;
+        top: 140px; /* ปรับให้อยู่เหนือ gif */
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        color: #444;
+        white-space: pre-wrap;
+        padding: 0 16px;
+      }
+
+      .pushable {
+        position: relative;
+        background: transparent;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        margin-top: 40px;
+        text-decoration: none;
+        font-family: "PixelFont", monospace;
+      }
+
+      .pushable .shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: #ccc;
+        border-radius: 20px;
+        filter: blur(1.5px);
+        transform: translateY(2px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable .edge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 20px;
+        background: #e6e6e6;
+      }
+
+      .pushable .front {
+        display: block;
+        position: relative;
+        border-radius: 20px;
+        background: #f9f9f9;
+        padding: 12px 24px;
+        color: #333;
+        font-weight: 600;
+        font-size: 1rem;
+        transform: translateY(-4px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable:hover .front {
+        transform: translateY(-6px);
+      }
+
+      .pushable:active .front {
+        transform: translateY(-2px);
+      }
+
+      .pushable:hover .shadow {
+        transform: translateY(4px);
+      }
+
+      .pushable:active .shadow {
+        transform: translateY(1px);
+      }
+
+      audio {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="typewriter-text" id="typewriter"></div>
+
+    <img
+      id="musician"
+      src="https://github.com/chayaninchr/Corn/raw/main/STAND.gif"
+      alt="นักดนตรี"
+    />
+
+    <button class="pushable" onclick="startSequence()">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front">เล่นดนตรี</span>
+    </button>
+
+    <audio id="musicPlayer">
+      <source
+        src="https://github.com/chayaninchr/Corn/raw/main/Synthesia.mp3"
+        type="audio/mp3"
+      />
+    </audio>
+
+    <script>
+      let loopInterval;
+
+      const fullText = `HAPPY BIRTHDAY
+มีความสุข สุขกาย สุขใจ ขอให้คนรอบข้างใจดีๆ
+เล่นเกมเก่งๆ เรียนเก่งๆ ประสบความสำเร็จทุกอย่าง
+อย่าดื้อ เป็นเด็กดี แล้วก็เป็นคนเก่งของพี่
+ดูแลตัวเองด้วย เป็นห่วงมากๆ รักงับเบบี๋
+ขอบคุณที่ทักมาชวนเล่นเกม <3
+คิดถึงมากกกกกกกก`;
+
+      function typeWriter(text, elementId, speed = 50) {
+        const el = document.getElementById(elementId);
+        el.innerText = "";
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < text.length) {
+            el.innerText += text.charAt(i);
+            i++;
+          } else {
+            clearInterval(interval);
+          }
+        }, speed);
+      }
+
+      function startSequence() {
+        const img = document.getElementById("musician");
+        const audio = document.getElementById("musicPlayer");
+        const button = document.querySelector(".pushable");
+
+        button.disabled = true;
+        typeWriter(fullText, "typewriter", 200);
+
+        audio.play().catch((e) => console.error("Play failed:", e));
+        audio.onended = () => {
+          clearInterval(loopInterval);
+          img.src = "https://github.com/chayaninchr/Corn/raw/main/STAND.gif";
+        };
+
+        img.src = "https://github.com/chayaninchr/Corn/raw/main/PLAY.gif";
+
+        setTimeout(() => {
+          img.src = "https://github.com/chayaninchr/Corn/raw/main/LOOP.gif";
+
+          loopInterval = setInterval(() => {
+            img.src = "";
+            void img.offsetWidth;
+            img.src = "https://github.com/chayaninchr/Corn/raw/main/LOOP.gif";
+          }, 10000);
+        }, 1300);
+      }
+    </script>
+  </body>
+</html>
