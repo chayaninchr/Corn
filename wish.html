@@ -1,4 +1,3 @@
-<!-- 👇 START: index.html -->
 <!DOCTYPE html>
 <html lang="th">
   <head>
@@ -159,7 +158,6 @@
         transform: translate(-50%, -50%);
       }
 
-      /* Pushable button style - ใช้กับทั้งสองปุ่ม */
       .pushable {
         position: relative;
         background: transparent;
@@ -169,6 +167,7 @@
         outline: none;
         -webkit-tap-highlight-color: transparent;
         margin-top: 6px;
+        text-decoration: none;
       }
 
       .pushable .shadow {
@@ -277,7 +276,6 @@
         <div id="placeholderText">ขอพรก่อนงับเบบี๋...</div>
       </div>
 
-      <!-- ปุ่มหลัก -->
       <button class="pushable" onclick="submitWish()">
         <span class="shadow"></span>
         <span class="edge"></span>
@@ -291,13 +289,12 @@
       alt="sending..."
     />
 
-    <!-- ปุ่มสุดท้าย -->
     <div id="finalButtonWrapper">
       <a href="https://chayaninchr.github.io/Corn/ask.html" class="pushable">
-  <span class="shadow"></span>
-  <span class="edge"></span>
-  <span class="front">ยิ้มก่อนค่อยกดปุ่ม</span>
-</a>
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front">ยิ้มก่อนค่อยกดปุ่ม</span>
+      </a>
     </div>
 
     <script>
@@ -343,11 +340,10 @@
           gif.style.display = "block";
         }, 3000);
 
-        // แสดงปุ่มหลัง GIF จบ (48 วิ)
         setTimeout(() => {
           gif.style.display = "none";
           finalButton.style.display = "block";
-        }, 51000); // 3s + 48s = 51s
+        }, 51000);
       }
     </script>
   </body>
