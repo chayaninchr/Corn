@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Birthday Game</title>
+    <style>
+      @font-face {
+        font-family: "PixelFont";
+        src: url("https://chayaninchr.github.io/Corn/PIXEL.ttf")
+          format("truetype");
+      }
+      * {
+        box-sizing: border-box;
+        font-family: "PixelFont", monospace;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        text-align: center;
+        flex-direction: column;
+      }
+      #startSection,
+      #loadingSection,
+      #notFoundSection {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      #startSection {
+        display: flex;
+      }
+      .face-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+      .face-img {
+        width: 80px;
+        image-rendering: pixelated;
+        animation: bounce 1.2s infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(-6px);
+        }
+        50% {
+          transform: translateY(0);
+        }
+      }
+      .pixel-input {
+        font-size: 20px;
+        padding: 12px;
+        width: 300px;
+        text-align: center;
+        border: none;
+        border-radius: 999px;
+        background: #f1f3f4;
+        color: #3a2e4f;
+        margin-top: 10px;
+      }
+      .pushable {
+        margin-top: 30px;
+        position: relative;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .pushable .shadow,
+      .edge,
+      .front {
+        border-radius: 20px;
+      }
+      .shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #ccc;
+        filter: blur(1.5px);
+        transform: translateY(2px);
+      }
+      .edge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #e6e6e6;
+      }
+      .front {
+        position: relative;
+        display: inline-block;
+        padding: 12px 24px;
+        background: #f9f9f9;
+        color: #333;
+        font-size: 1.2rem;
+        transform: translateY(-4px);
+      }
+      .bar-wrapper {
+        width: 320px;
+        height: 22px;
+        background: #f1f3f4;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 20px;
+        position: relative;
+      }
+      .bar-fill {
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, #d8b4fe, #f9a8d4);
+        transition: width 0.2s;
+      }
+      .bar-text {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+      }
+      #typingText {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #a078c3;
+        height: 24px;
+      }
+      .center-text {
+        font-size: 36px;
+        margin-top: 30px;
+        color: #a078c3;
+        line-height: 1.4;
+        width: 360px;
+        text-align: center;
+        visibility: hidden;
+      }
+      .fadeOut {
+        animation: fadeOut 1s forwards;
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+      }
+      .heart {
+        animation: heartBeat 0.4s ease-in-out 3;
+        font-size: 36px;
+        color: #f28b82;
+      }
+      @keyframes heartBeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.4);
+        }
+      }
+      .pin-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .pin-input {
+        width: 50px;
+        height: 50px;
+        font-size: 28px;
+        text-align: center;
+        border: 2px solid #999;
+        border-radius: 8px;
+      }
+      .shake {
+        animation: shakeY 0.4s;
+        border-color: #c00 !important;
+      }
+      @keyframes shakeY {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        25%,
+        75% {
+          transform: translateY(-5px);
+        }
+        50% {
+          transform: translateY(5px);
+        }
+      }
+      #pinPrompt {
+        font-size: 24px;
+        color: #444;
+        margin-top: 10px;
+      }
+      #notFoundSection p {
+        font-size: 40px;
+        color: red;
+        animation: blinkRed 0.8s steps(1, start) 3;
+        margin-top: 30px;
+      }
+      @keyframes blinkRed {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="startSection">
+      <div class="face-row">
+        <img
+          src="https://chayaninchr.github.io/Corn/cornpixel-face.png"
+          class="face-img"
+        />
+        <img
+          src="https://chayaninchr.github.io/Corn/cornpixel-face.png"
+          class="face-img"
+        />
+        <img
+          src="https://chayaninchr.github.io/Corn/cornpixel-face.png"
+          class="face-img"
+        />
+      </div>
+      <input id="nameInput" class="pixel-input" placeholder="กรอกชื่อเล่น..." />
+      <button onclick="startLoading()" class="pushable">
+        <span class="shadow"></span><span class="edge"></span
+        ><span class="front">ล็อคอิน</span>
+      </button>
+    </div>
+
+    <div id="loadingSection">
+      <div id="typingText"></div>
+      <div class="bar-wrapper">
+        <div class="bar-fill" id="barFill"></div>
+        <div class="bar-text" id="barText">0%</div>
+      </div>
+      <div id="centerText" class="center-text"></div>
+    </div>
+
+    <div id="notFoundSection"><p>ไม่พบชื่อคุณ!</p></div>
+
+    <script>
+      const allowed = [
+        "โพส",
+        "โพด",
+        "ข้าวโพด",
+        "post",
+        "cowpost",
+        "khaopod",
+        "ข้าว",
+      ];
+      let hinted = false;
+
+      function startLoading() {
+        if (!document.getElementById("nameInput").value.trim()) return;
+        document.getElementById("startSection").style.display = "none";
+        document.getElementById("loadingSection").style.display = "flex";
+        typingLoop("กำลังค้นหา...");
+        animateProgress(() => {
+          if (
+            !allowed.includes(
+              document.getElementById("nameInput").value.trim().toLowerCase()
+            )
+          ) {
+            document.getElementById("loadingSection").style.display = "none";
+            document.getElementById("notFoundSection").style.display = "flex";
+            setTimeout(() => location.reload(), 2400);
+          } else showSequence();
+        });
+      }
+
+      function typingLoop(msg) {
+        const el = document.getElementById("typingText");
+        el.innerText = "";
+        let i = 0;
+        function loop() {
+          el.innerText = "";
+          i = 0;
+          const iv = setInterval(() => {
+            el.innerText += msg[i++];
+            if (i >= msg.length) {
+              clearInterval(iv);
+              setTimeout(loop, 500);
+            }
+          }, 100);
+        }
+        loop();
+      }
+
+      function animateProgress(cb) {
+        let p = 0;
+        const iv = setInterval(() => {
+          if (p >= 100) {
+            clearInterval(iv);
+            document.getElementById("barText").innerText = "100%";
+            setTimeout(() => {
+              document.querySelector(".bar-wrapper").style.display = "none";
+              document.getElementById("typingText").style.display = "none";
+              cb();
+            }, 500);
+          } else {
+            p++;
+            document.getElementById("barFill").style.width = p + "%";
+            document.getElementById("barText").innerText = p + "%";
+          }
+        }, 25);
+      }
+
+      function showSequence() {
+        const msgs = ["เจอแล้ว!", "เอ๊ะ!", "อยู่ในหัวใจป๋มเอง\u00A0<3"];
+        const el = document.getElementById("centerText");
+        el.style.visibility = "visible";
+        let i = 0;
+        function next() {
+          if (i >= msgs.length) {
+            handleEraseHeart(msgs[2]);
+            return;
+          }
+          typeLine(msgs[i++], next);
+        }
+        next();
+      }
+
+      function typeLine(txt, cb) {
+        const el = document.getElementById("centerText");
+        el.innerText = "";
+        let i = 0;
+        const iv = setInterval(() => {
+          el.innerText += txt[i++];
+          if (i >= txt.length) {
+            clearInterval(iv);
+            setTimeout(cb, 800);
+          }
+        }, 80);
+      }
+
+      function handleEraseHeart(full) {
+        const el = document.getElementById("centerText");
+        let str = full.replace(" <3", "");
+        const erase = setInterval(() => {
+          if (str.length > 0) {
+            str = str.slice(0, -1);
+            el.innerText = str + " <3";
+          } else {
+            clearInterval(erase);
+            showFinalHeart(el);
+          }
+        }, 80);
+      }
+
+      function showFinalHeart(el) {
+        el.innerHTML = '<span class="heart">&lt;3</span>';
+        setTimeout(() => {
+          el.classList.add("fadeOut");
+          setTimeout(showPinLogin, 700);
+        }, 1000);
+      }
+
+      function showPinLogin() {
+        const sec = document.getElementById("loadingSection");
+        sec.innerHTML = `<h2 id="pinPrompt" style="color:#444;">เบบี๋ใส่รหัสผ่านก่อนงับ</h2>
+  <div class="pin-container">
+    <input maxlength="1" class="pin-input" inputmode="numeric" pattern="[0-9]*" id="pin1">
+    <input maxlength="1" class="pin-input" inputmode="numeric" pattern="[0-9]*" id="pin2">
+    <input maxlength="1" class="pin-input" inputmode="numeric" pattern="[0-9]*" id="pin3">
+    <input maxlength="1" class="pin-input" inputmode="numeric" pattern="[0-9]*" id="pin4">
+  </div>
+  <button onclick="checkPin()" class="pushable" style="margin-top:20px;">
+    <span class="shadow"></span><span class="edge"></span><span class="front">ล็อคอิน</span></button>`;
+        addPinFocus();
+      }
+
+      function addPinFocus() {
+        const ps = [...document.querySelectorAll(".pin-input")];
+        ps[0].focus();
+        ps.forEach((e, i) => {
+          e.addEventListener("input", () => {
+            e.value = e.value.replace(/\D/g, "");
+            if (e.value && i < ps.length - 1) ps[i + 1].focus();
+          });
+          e.addEventListener("keydown", (ev) => {
+            if (ev.key === "Backspace" && !e.value && i > 0) ps[i - 1].focus();
+          });
+        });
+      }
+
+      function checkPin() {
+        const code = [...document.querySelectorAll(".pin-input")]
+          .map((e) => e.value)
+          .join("");
+        const pr = document.getElementById("pinPrompt");
+        if (code === "8585") {
+          hinted = true;
+          pr.innerText = "";
+          pr.style.color = "#444";
+          typeHint(
+            pr,
+            "โอเง\u00A0ใส่\u00A01307\u00A0ได้\u00A0รู้ว่าลองไปแล้ว!"
+          );
+        } else if (code === "1307" && hinted) {
+          document.getElementById("loadingSection").innerHTML = "";
+          showSuccess();
+        } else {
+          document.querySelectorAll(".pin-input").forEach((e) => {
+            e.classList.add("shake");
+            setTimeout(() => e.classList.remove("shake"), 400);
+          });
+        }
+      }
+
+      function typeHint(el, msg) {
+        el.innerText = "";
+        let i = 0;
+        const iv = setInterval(() => {
+          el.innerText += msg[i++];
+          if (i >= msg.length) clearInterval(iv);
+        }, 60);
+      }
+
+      function showSuccess() {
+        const d = document.createElement("div");
+        d.textContent = "สำเร็จ!";
+        d.style.fontSize = "36px";
+        d.style.color = "#4caf50";
+        d.classList.add("fadeOut");
+        document.body.appendChild(d);
+        setTimeout(
+          () => (location.href = "https://chayaninchr.github.io/Corn/ask.html"),
+          1500
+        );
+      }
+    </script>
+  </body>
+</html>
