@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VIP WALLET</title>
+    <style>
+      @font-face {
+        font-family: "PixelFont";
+        src: url("https://chayaninchr.github.io/Corn/PIXEL.ttf")
+          format("truetype");
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        font-family: "PixelFont", monospace;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      img.center-img {
+        max-width: 90vw;
+        max-height: 60vh;
+        height: auto;
+        margin-top: 40px;
+        margin-bottom: 24px;
+        transform: scale(0);
+        animation: zoomIn 0.4s ease-out forwards;
+      }
+
+      @keyframes zoomIn {
+        to {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.08);
+        }
+        50% {
+          transform: scale(0.95);
+        }
+        75% {
+          transform: scale(1.1);
+        }
+      }
+
+      .heartbeat {
+        animation: heartbeat 0.8s infinite;
+      }
+
+      .question {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        padding: 0 20px;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        transition: opacity 0.4s ease;
+        margin-bottom: 40px;
+        position: relative;
+      }
+
+      .hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .pushable {
+        width: 140px;
+        height: 50px;
+        position: relative;
+        background: transparent;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        text-decoration: none;
+      }
+
+      .pushable .shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: #ccc;
+        border-radius: 20px;
+        filter: blur(1.5px);
+        transform: translateY(2px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable .edge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 20px;
+        background: #e6e6e6;
+      }
+
+      .pushable .front {
+        display: block;
+        position: relative;
+        border-radius: 20px;
+        background: #f9f9f9;
+        padding: 12px 24px;
+        color: #333;
+        font-weight: 600;
+        font-size: 1rem;
+        font-family: "PixelFont", monospace;
+        transform: translateY(-4px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable:hover .front {
+        transform: translateY(-6px);
+      }
+
+      .pushable:active .front {
+        transform: translateY(-2px);
+      }
+
+      .pushable:hover .shadow {
+        transform: translateY(4px);
+      }
+
+      .pushable:active .shadow {
+        transform: translateY(1px);
+      }
+
+      @media (max-width: 480px) {
+        .question {
+          font-size: 1.2rem;
+        }
+
+        .pushable .front {
+          font-size: 0.9rem;
+          padding: 10px 18px;
+        }
+
+        img.center-img {
+          max-width: 95vw;
+          max-height: 50vh;
+        }
+      }
+
+      @keyframes shakeBounceForever {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        20% {
+          transform: translate(-8px, -5px) rotate(-6deg);
+        }
+        40% {
+          transform: translate(8px, -5px) rotate(6deg);
+        }
+        60% {
+          transform: translate(-6px, 4px) rotate(-4deg);
+        }
+        80% {
+          transform: translate(6px, 4px) rotate(4deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+
+      .bounce-celebrate {
+        animation: shakeBounceForever 1s ease-in-out infinite;
+      }
+
+      #kickBtn {
+        transition: transform 0.1s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      id="mainImage"
+      class="center-img"
+      src="https://raw.githubusercontent.com/chayaninchr/Corn/main/giftforluvv2_1.png"
+      alt="ของขวัญ"
+    />
+
+    <div class="question">พี่อยากไล่ผมออกมั้ยครับ?</div>
+
+    <div class="button-container" id="buttonGroup">
+      <button class="pushable" onclick="submitWish()">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front">ไม่จ้า&lt;3</span>
+      </button>
+
+      <button class="pushable" id="kickBtn">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front">ไล่ออก</span>
+      </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+      function submitWish() {
+        const image = document.getElementById("mainImage");
+        const buttons = document.getElementById("buttonGroup");
+        const question = document.querySelector(".question");
+
+        buttons.classList.add("hidden");
+        question.classList.add("hidden");
+        image.classList.add("bounce-celebrate", "heartbeat");
+
+        const interval = setInterval(() => {
+          confetti({
+            particleCount: 80,
+            spread: 100,
+            startVelocity: 40,
+            angle: Math.random() * 60 + 60,
+            scalar: Math.random() * 0.6 + 0.7,
+            colors: [
+              "#ff0a54",
+              "#ff477e",
+              "#ff7096",
+              "#ff85a1",
+              "#ffa3b5",
+              "#ffffff",
+            ],
+            origin: { y: Math.random() * 0.4 + 0.3 },
+          });
+        }, 300);
+
+        setTimeout(() => clearInterval(interval), 3000);
+      }
+
+      const kickBtn = document.getElementById("kickBtn");
+
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        const rect = kickBtn.getBoundingClientRect();
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+
+        const dx = mouseX - btnCenterX;
+        const dy = mouseY - btnCenterY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const distanceThreshold = 120;
+
+        if (distance < distanceThreshold) {
+          const evadeDistance = 200; // เพิ่มระยะหลบ
+          const evadeX = (-dx / distance) * evadeDistance;
+          const evadeY = (-dy / distance) * evadeDistance;
+          kickBtn.style.transform = `translate(${evadeX}px, ${evadeY}px)`;
+        } else {
+          kickBtn.style.transform = `translate(0, 0)`;
+        }
+      });
+    </script>
+  </body>
+</html>
