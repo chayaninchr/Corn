@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <title>กล่องอธิษฐาน</title>
+
+    <style>
+      @font-face {
+        font-family: "PixelFont";
+        src: url("https://chayaninchr.github.io/Corn/PIXEL.ttf")
+          format("truetype");
+        font-display: swap;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "PixelFont", monospace;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+      }
+
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* =========================
+         หน้าแรก: กล่องอธิษฐาน
+      ========================= */
+
+      .wish-page {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 20px 16px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+
+        background: #ffffff;
+
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .wish-page.page-exit {
+        opacity: 0;
+        transform: scale(0.96);
+        pointer-events: none;
+      }
+
+      #cake {
+        width: 364px;
+        max-width: 110vw;
+        height: auto;
+        margin-bottom: -70px;
+
+        position: relative;
+        z-index: 2;
+      }
+
+      .wish-box {
+        width: 100%;
+        max-width: 500px;
+        height: 100px;
+        padding: 10px 18px;
+
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background: #ffffff;
+        border: 1px solid #dfe1e5;
+        border-radius: 24px;
+        box-shadow: 0 1px 6px rgba(32, 33, 36, 0.1);
+      }
+
+      .wish-box:focus-within {
+        box-shadow: 0 2px 10px rgba(32, 33, 36, 0.18);
+      }
+
+      #wishText {
+        width: 100%;
+        height: 100%;
+        padding: 28px 0 0;
+
+        border: none;
+        outline: none;
+        resize: none;
+
+        background: transparent;
+        color: #333333;
+
+        font-size: 18px;
+        line-height: 1.6;
+        text-align: center;
+
+        position: relative;
+        z-index: 2;
+      }
+
+      #placeholderText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        color: #999999;
+        font-size: 18px;
+        text-align: center;
+        white-space: nowrap;
+        pointer-events: none;
+
+        z-index: 1;
+      }
+
+      .pushable {
+        position: relative;
+        margin-top: 6px;
+        padding: 0;
+
+        background: transparent;
+        border: none;
+        outline: none;
+
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .pushable:disabled {
+        cursor: default;
+      }
+
+      .pushable .shadow {
+        position: absolute;
+        inset: 0;
+
+        background: #cccccc;
+        border-radius: 20px;
+        filter: blur(1.5px);
+
+        transform: translateY(2px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable .edge {
+        position: absolute;
+        inset: 0;
+
+        background: #e6e6e6;
+        border-radius: 20px;
+      }
+
+      .pushable .front {
+        position: relative;
+        display: block;
+
+        padding: 12px 24px;
+
+        background: #f9f9f9;
+        border-radius: 20px;
+
+        color: #333333;
+        font-size: 16px;
+        font-weight: 600;
+
+        transform: translateY(-4px);
+        transition: transform 200ms ease;
+      }
+
+      .pushable:not(:disabled):hover .front {
+        transform: translateY(-6px);
+      }
+
+      .pushable:not(:disabled):active .front {
+        transform: translateY(-2px);
+      }
+
+      .pushable:not(:disabled):hover .shadow {
+        transform: translateY(4px);
+      }
+
+      .pushable:not(:disabled):active .shadow {
+        transform: translateY(1px);
+      }
+
+      /* ข้อความเตือน */
+
+      .alert-message {
+        display: none;
+        position: fixed;
+
+        top: 47%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        z-index: 1000;
+
+        color: #ff8080;
+        font-size: clamp(58px, 13vw, 94px);
+        font-weight: bold;
+        text-align: center;
+        white-space: nowrap;
+
+        text-shadow: 2px 2px 4px #000000;
+      }
+
+      .alert-message.show {
+        display: block;
+        animation: alertBlink 0.6s ease-in-out 3;
+      }
+
+      @keyframes alertBlink {
+        0%,
+        100% {
+          opacity: 0;
+        }
+
+        30% {
+          opacity: 1;
+        }
+      }
+
+      /* =========================
+         หน้าที่สอง: ข้อความพิมพ์
+      ========================= */
+
+      .music-page {
+        display: none;
+        position: fixed;
+        inset: 0;
+
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+
+        background: #ffffff;
+        overflow: hidden;
+        opacity: 0;
+      }
+
+      .music-page.show {
+        display: block;
+        animation: musicPageIn 0.8s ease forwards;
+      }
+
+      @keyframes musicPageIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      .typing-area {
+        position: absolute;
+
+        top: -5%;
+        left: 50%;
+        transform: translateX(-50%);
+
+        width: min(88vw, 720px);
+        height: calc(100dvh - 330px);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        overflow: hidden;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .typewriter-text {
+        width: 100%;
+        max-height: 100%;
+
+        color: #c4a5e8;
+        font-size: clamp(16px, 4vw, 22px);
+        font-weight: normal;
+        line-height: 1.75;
+        letter-spacing: 1px;
+        text-align: center;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      /* เคอร์เซอร์กะพริบ */
+
+      .typing-cursor {
+        display: inline-block;
+
+        width: 3px;
+        height: 1em;
+        margin-left: 4px;
+
+        background: #c4a5e8;
+        vertical-align: -0.12em;
+
+        animation: cursorBlink 0.7s steps(1) infinite;
+      }
+
+      @keyframes cursorBlink {
+        0%,
+        45% {
+          opacity: 1;
+        }
+
+        46%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      #musician {
+        position: absolute;
+
+        left: 50%;
+        bottom: -10px;
+
+        width: min(100%, 480px);
+        height: auto;
+
+        transform: translateX(-50%);
+        object-fit: contain;
+
+        z-index: 2;
+      }
+
+      audio {
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        #cake {
+          width: 437px;
+          max-width: 120vw;
+        }
+
+        .wish-box {
+          height: 120px;
+          padding: 0 24px;
+        }
+
+        #wishText {
+          padding-top: 24px;
+          font-size: 20px;
+        }
+
+        #placeholderText {
+          font-size: 20px;
+        }
+
+        .pushable .front {
+          padding: 12px 28px;
+          font-size: 18px;
+        }
+
+        .typing-area {
+          top: 4%;
+          width: 91vw;
+          height: calc(100dvh - 300px);
+          align-items: flex-start;
+          padding-top: 20px;
+        }
+
+        .typewriter-text {
+          font-size: clamp(17px, 5vw, 23px);
+          line-height: 1.65;
+          letter-spacing: 0.4px;
+        }
+
+        #musician {
+          width: 115%;
+          max-width: 500px;
+          bottom: -5px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="alert-message" id="alertText">ขอพรก่อนคับ :)</div>
+
+    <!-- หน้าแรก: กล่องอธิษฐาน -->
+
+    <main class="wish-page" id="wishPage">
+      <img
+        id="cake"
+        src="https://chayaninchr.github.io/Corn/birthday_cake.gif"
+        alt="เค้กวันเกิด"
+      />
+
+      <div class="wish-box">
+        <textarea
+          id="wishText"
+          aria-label="กล่องอธิษฐาน"
+          maxlength="500"
+        ></textarea>
+
+        <div id="placeholderText">อธิษฐานขอพร ...</div>
+      </div>
+
+      <button class="pushable" id="wishButton" type="button">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front">อธิษฐาน</span>
+      </button>
+    </main>
+
+    <!-- หน้าที่สอง: ข้อความพิมพ์ทีละตัว -->
+
+    <main class="music-page" id="musicPage">
+      <div class="typing-area">
+        <div class="typewriter-text">
+          <span id="typewriter"></span><span
+            class="typing-cursor"
+            id="typingCursor"
+          ></span>
+        </div>
+      </div>
+
+      <img
+        id="musician"
+        src="https://chayaninchr.github.io/Corn/STAND.gif"
+        alt="นักดนตรี"
+      />
+    </main>
+
+    <audio id="musicPlayer" preload="auto">
+      <source
+        src="https://chayaninchr.github.io/Corn/Synthesia.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      const wishPage = document.getElementById("wishPage");
+      const musicPage = document.getElementById("musicPage");
+
+      const wishInput = document.getElementById("wishText");
+      const placeholderText =
+        document.getElementById("placeholderText");
+
+      const wishButton = document.getElementById("wishButton");
+      const alertText = document.getElementById("alertText");
+
+      const typewriter = document.getElementById("typewriter");
+      const typingCursor =
+        document.getElementById("typingCursor");
+
+      const musician = document.getElementById("musician");
+      const musicPlayer =
+        document.getElementById("musicPlayer");
+
+      const standGif =
+        "https://chayaninchr.github.io/Corn/STAND.gif";
+
+      const playGif =
+        "https://chayaninchr.github.io/Corn/PLAY.gif";
+
+      const loopGif =
+        "https://chayaninchr.github.io/Corn/LOOP.gif";
+
+      const fullText = `
+HAPPY BIRTHDAY 
+ขอให้แม่เล็กมีความสุข ความเจริญ 
+สมหวังทุกสิ่งที่ปรารถนา สุขภาพร่างกายแข็งแรง  
+ไม่เจ็บไม่ป่วย ร่ำรวยเงินทอง 
+เป็นร่มโพธิ์ร่มไทรให้ลูกหลานไปนานๆ
+`;
+
+      let alertTimer = null;
+      let typewriterTimer = null;
+      let gifStartTimer = null;
+      let gifLoopTimer = null;
+      let submitted = false;
+
+      function showAlert() {
+        if (alertTimer) {
+          clearTimeout(alertTimer);
+        }
+
+        alertText.classList.remove("show");
+
+        void alertText.offsetWidth;
+
+        alertText.classList.add("show");
+
+        alertTimer = setTimeout(() => {
+          alertText.classList.remove("show");
+        }, 1800);
+      }
+
+      function restartGif(url) {
+        musician.src = `${url}?time=${Date.now()}`;
+      }
+
+      function startTypewriter(text, speed = 75) {
+        clearInterval(typewriterTimer);
+
+        typewriter.textContent = "";
+        typingCursor.style.display = "inline-block";
+
+        let index = 0;
+
+        typewriterTimer = setInterval(() => {
+          if (index >= text.length) {
+            clearInterval(typewriterTimer);
+            typewriterTimer = null;
+
+            /*
+              ซ่อนเคอร์เซอร์หลังพิมพ์จบ 1.5 วินาที
+            */
+            setTimeout(() => {
+              typingCursor.style.display = "none";
+            }, 1500);
+
+            return;
+          }
+
+          typewriter.textContent += text.charAt(index);
+          index += 1;
+        }, speed);
+      }
+
+      function startMusicianAnimation() {
+        restartGif(playGif);
+
+        gifStartTimer = setTimeout(() => {
+          restartGif(loopGif);
+
+          gifLoopTimer = setInterval(() => {
+            restartGif(loopGif);
+          }, 10000);
+        }, 1300);
+      }
+
+      function finishMusic() {
+        clearTimeout(gifStartTimer);
+        clearInterval(gifLoopTimer);
+
+        gifStartTimer = null;
+        gifLoopTimer = null;
+
+        musician.src = standGif;
+      }
+
+      async function showMusicPage() {
+        const wish = wishInput.value.trim();
+
+        if (!wish) {
+          wishInput.focus();
+          showAlert();
+          return;
+        }
+
+        if (submitted) {
+          return;
+        }
+
+        submitted = true;
+
+        wishButton.disabled = true;
+        wishInput.blur();
+
+        wishPage.classList.add("page-exit");
+
+        setTimeout(async () => {
+          wishPage.style.display = "none";
+          musicPage.classList.add("show");
+
+          /*
+            เริ่มพิมพ์ข้อความทีละตัว
+            เลขยิ่งน้อยยิ่งพิมพ์เร็ว
+          */
+          startTypewriter(fullText, 75);
+
+          startMusicianAnimation();
+
+          musicPlayer.currentTime = 0;
+          musicPlayer.volume = 0.65;
+
+          try {
+            await musicPlayer.play();
+          } catch (error) {
+            console.error(
+              "ไม่สามารถเล่นเพลงได้:",
+              error
+            );
+          }
+        }, 700);
+      }
+
+      wishInput.addEventListener("input", () => {
+        placeholderText.style.display =
+          wishInput.value.trim() ? "none" : "block";
+      });
+
+      wishButton.addEventListener("click", showMusicPage);
+
+      musicPlayer.addEventListener("ended", finishMusic);
+    </script>
+  </body>
+</html>
